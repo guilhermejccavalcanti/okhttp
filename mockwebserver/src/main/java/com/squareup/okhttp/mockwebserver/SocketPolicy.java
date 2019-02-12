@@ -13,67 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.squareup.okhttp.mockwebserver;
 
 /** What should be done with the incoming socket. */
 public enum SocketPolicy {
 
-  /**
+    /**
    * Keep the socket open after the response. This is the default HTTP/1.1
    * behavior.
    */
-  KEEP_OPEN,
-
-  /**
+    KEEP_OPEN(), /**
    * Close the socket after the response. This is the default HTTP/1.0
    * behavior.
    */
-  DISCONNECT_AT_END,
-
-  /**
+    DISCONNECT_AT_END(), /**
    * Wrap the socket with SSL at the completion of this request/response pair.
    * Used for CONNECT messages to tunnel SSL over an HTTP proxy.
    */
-  UPGRADE_TO_SSL_AT_END,
-
-  /**
+    UPGRADE_TO_SSL_AT_END(), /**
    * Request immediate close of connection without even reading the request. Use
    * to simulate buggy SSL servers closing connections in response to
    * unrecognized TLS extensions.
    */
-  DISCONNECT_AT_START,
-
-  /**
+    DISCONNECT_AT_START(), /**
    * Close connection after reading the request but before writing the response.
    * Use this to simulate late connection pool failures.
    */
-  DISCONNECT_AFTER_REQUEST,
-
-  /** Close connection after reading half of the request body (if present). */
-  DISCONNECT_DURING_REQUEST_BODY,
-
-  /** Close connection after writing half of the response body (if present). */
-  DISCONNECT_DURING_RESPONSE_BODY,
-
-  /** Don't trust the client during the SSL handshake. */
-  FAIL_HANDSHAKE,
-
-  /**
+    DISCONNECT_AFTER_REQUEST(), /** Close connection after reading half of the request body (if present). */
+    DISCONNECT_DURING_REQUEST_BODY(), /** Close connection after writing half of the response body (if present). */
+    DISCONNECT_DURING_RESPONSE_BODY(), /** Don't trust the client during the SSL handshake. */
+    FAIL_HANDSHAKE(), /**
    * Shutdown the socket input after sending the response. For testing bad
    * behavior.
    */
-  SHUTDOWN_INPUT_AT_END,
-
-  /**
+    SHUTDOWN_INPUT_AT_END(), /**
    * Shutdown the socket output after sending the response. For testing bad
    * behavior.
    */
-  SHUTDOWN_OUTPUT_AT_END,
-
-  /**
+    SHUTDOWN_OUTPUT_AT_END(), /**
    * Don't respond to the request but keep the socket open. For testing
    * read response header timeout issue.
    */
-  NO_RESPONSE
+    NO_RESPONSE()
 }

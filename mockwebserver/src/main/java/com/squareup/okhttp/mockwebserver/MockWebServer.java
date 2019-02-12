@@ -15,85 +15,95 @@
  * limitations under the License.
  */
 
-package com.squareup.okhttp.mockwebserver;
+package com.squareup.okhttp.mockwebserver; 
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.Protocol;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.NamedRunnable;
-import com.squareup.okhttp.internal.Platform;
-import com.squareup.okhttp.internal.Util;
-import com.squareup.okhttp.internal.framed.ErrorCode;
-import com.squareup.okhttp.internal.framed.FramedConnection;
-import com.squareup.okhttp.internal.framed.FramedStream;
-import com.squareup.okhttp.internal.framed.Header;
-import com.squareup.okhttp.internal.framed.Settings;
-import com.squareup.okhttp.internal.http.HttpMethod;
-import com.squareup.okhttp.internal.ws.RealWebSocket;
-import com.squareup.okhttp.internal.ws.WebSocketProtocol;
-import com.squareup.okhttp.ws.WebSocketListener;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ProtocolException;
-import java.net.Proxy;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import okio.Buffer;
-import okio.BufferedSink;
-import okio.BufferedSource;
-import okio.ByteString;
-import okio.Okio;
-import okio.Sink;
-import okio.Timeout;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import com.squareup.okhttp.Headers; 
+import com.squareup.okhttp.HttpUrl; 
+import com.squareup.okhttp.Protocol; 
+import com.squareup.okhttp.Request; 
+import com.squareup.okhttp.Response; 
+import com.squareup.okhttp.internal.NamedRunnable; 
+import com.squareup.okhttp.internal.Platform; 
+import com.squareup.okhttp.internal.Util; 
+import com.squareup.okhttp.internal.framed.ErrorCode; 
+import com.squareup.okhttp.internal.framed.FramedConnection; 
+import com.squareup.okhttp.internal.framed.FramedStream; 
+import com.squareup.okhttp.internal.framed.Header; 
+import com.squareup.okhttp.internal.framed.Settings; 
+import com.squareup.okhttp.internal.http.HttpMethod; 
+ 
+ 
+ 
+ 
+ 
+import com.squareup.okhttp.internal.ws.RealWebSocket; 
+ 
+import com.squareup.okhttp.internal.ws.WebSocketProtocol; 
+import com.squareup.okhttp.ws.WebSocketListener; 
+import java.io.IOException; 
+import java.net.InetAddress; 
+import java.net.InetSocketAddress; 
+ 
+import java.net.ProtocolException; 
+import java.net.Proxy; 
+import java.net.ServerSocket; 
+import java.net.Socket; 
+import java.net.SocketException; 
+ 
+import java.security.SecureRandom; 
+import java.security.cert.CertificateException; 
+import java.security.cert.X509Certificate; 
+import java.util.ArrayList; 
+import java.util.Collections; 
+import java.util.Iterator; 
+import java.util.List; 
+import java.util.Locale; 
+import java.util.Set; 
+import java.util.concurrent.BlockingQueue; 
+import java.util.concurrent.ConcurrentHashMap; 
+import java.util.concurrent.CountDownLatch; 
+import java.util.concurrent.ExecutorService; 
+import java.util.concurrent.Executors; 
+import java.util.concurrent.LinkedBlockingDeque; 
+import java.util.concurrent.LinkedBlockingQueue; 
+import java.util.concurrent.ThreadPoolExecutor; 
+import java.util.concurrent.TimeUnit; 
+import java.util.concurrent.atomic.AtomicInteger; 
+import java.util.logging.Level; 
+import java.util.logging.Logger; 
+import javax.net.ServerSocketFactory; 
+import javax.net.ssl.SSLContext; 
+import javax.net.ssl.SSLSocket; 
+import javax.net.ssl.SSLSocketFactory; 
+import javax.net.ssl.TrustManager; 
+import javax.net.ssl.X509TrustManager; 
+import okio.Buffer; 
+import okio.BufferedSink; 
+import okio.BufferedSource; 
+import okio.ByteString; 
+import okio.Okio; 
+import okio.Sink; 
+import okio.Timeout; 
+import org.junit.rules.TestRule; 
+import org.junit.runner.Description; 
+import org.junit.runners.model.Statement; 
 
-import static com.squareup.okhttp.mockwebserver.SocketPolicy.DISCONNECT_AT_START;
-import static com.squareup.okhttp.mockwebserver.SocketPolicy.DISCONNECT_DURING_REQUEST_BODY;
-import static com.squareup.okhttp.mockwebserver.SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY;
-import static com.squareup.okhttp.mockwebserver.SocketPolicy.FAIL_HANDSHAKE;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static com.squareup.okhttp.mockwebserver.SocketPolicy.DISCONNECT_AT_START; 
+import static com.squareup.okhttp.mockwebserver.SocketPolicy.DISCONNECT_DURING_REQUEST_BODY; 
+import static com.squareup.okhttp.mockwebserver.SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY; 
+import static com.squareup.okhttp.mockwebserver.SocketPolicy.FAIL_HANDSHAKE; 
+import static java.util.concurrent.TimeUnit.SECONDS; 
 
 /**
  * A scriptable web server. Callers supply canned responses and the server
  * replays them upon request in sequence.
  */
-public final class MockWebServer implements TestRule {
+public final  class  MockWebServer  implements TestRule {
+	
+  
+
   private static final X509TrustManager UNTRUSTED_TRUST_MANAGER = new X509TrustManager() {
-    @Override public void checkClientTrusted(X509Certificate[] chain, String authType)
-        throws CertificateException {
+    @Override public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
       throw new CertificateException();
     }
 
@@ -106,30 +116,97 @@ public final class MockWebServer implements TestRule {
     }
   };
 
+	
+
+  
+
   private static final Logger logger = Logger.getLogger(MockWebServer.class.getName());
+
+	
+
+  
 
   private final BlockingQueue<RecordedRequest> requestQueue = new LinkedBlockingQueue<>();
 
-  private final Set<Socket> openClientSockets =
-      Collections.newSetFromMap(new ConcurrentHashMap<Socket, Boolean>());
+	
+
+  
+
+  private final Set<Socket> openClientSockets = Collections.newSetFromMap(new ConcurrentHashMap<Socket, Boolean>());
+
+	
   private final Set<FramedConnection> openFramedConnections =
       Collections.newSetFromMap(new ConcurrentHashMap<FramedConnection, Boolean>());
+	
+  
+
+
+	
+  
+
   private final AtomicInteger requestCount = new AtomicInteger();
+
+	
+  
+
   private long bodyLimit = Long.MAX_VALUE;
+
+	
+  
+
   private ServerSocketFactory serverSocketFactory = ServerSocketFactory.getDefault();
+
+	
+  
+
   private ServerSocket serverSocket;
+
+	
+  
+
   private SSLSocketFactory sslSocketFactory;
+
+	
+  
+
   private ExecutorService executor;
+
+	
+  
+
   private boolean tunnelProxy;
+
+	
+  
+
   private Dispatcher dispatcher = new QueueDispatcher();
 
+	
+
+  
+
   private int port = -1;
+
+	
   private InetSocketAddress inetSocketAddress;
+	
+  
+
+
+	
+  
+
   private boolean protocolNegotiationEnabled = true;
-  private List<Protocol> protocols
-      = Util.immutableList(Protocol.HTTP_2, Protocol.SPDY_3, Protocol.HTTP_1_1);
+
+	
+  
+
+  private List<Protocol> protocols = Util.immutableList(Protocol.HTTP_2, Protocol.SPDY_3, Protocol.HTTP_1_1);
+
+	
 
   private boolean started;
+	
 
   private synchronized void maybeStart() {
     if (started) return;
@@ -139,6 +216,7 @@ public final class MockWebServer implements TestRule {
       throw new RuntimeException(e);
     }
   }
+	
 
   @Override public Statement apply(final Statement base, Description description) {
     return new Statement() {
@@ -156,30 +234,18 @@ public final class MockWebServer implements TestRule {
       }
     };
   }
+	
 
-  public int getPort() {
-    maybeStart();
-    return port;
-  }
-
-  public String getHostName() {
-    maybeStart();
-    return inetSocketAddress.getHostName();
-  }
-
-  public Proxy toProxyAddress() {
-    maybeStart();
-    InetSocketAddress address = new InetSocketAddress(inetSocketAddress.getAddress(), getPort());
-    return new Proxy(Proxy.Type.HTTP, address);
-  }
+  
 
   public void setServerSocketFactory(ServerSocketFactory serverSocketFactory) {
     if (executor != null) {
-      throw new IllegalStateException(
-          "setServerSocketFactory() must be called before start()");
+      throw new IllegalStateException("setServerSocketFactory() must be called before start()");
     }
     this.serverSocketFactory = serverSocketFactory;
   }
+
+	
 
   /**
    * Returns a URL for connecting to this server.
@@ -194,33 +260,83 @@ public final class MockWebServer implements TestRule {
         .build()
         .resolve(path);
   }
+	
+
+  
+
+  public int getPort() {
+    maybeStart();
+    return port;
+  }
+
+	
+
+  
+
+  public String getHostName() {
+    maybeStart();
+    return inetSocketAddress.getHostName();
+  }
+
+	
+
+  
+
+  public Proxy toProxyAddress() {
+    maybeStart();
+    InetSocketAddress address = new InetSocketAddress(inetSocketAddress.getAddress(), getPort());
+    return new Proxy(Proxy.Type.HTTP, address);
+  }
+
+	
+
+  /**
+   * Returns a URL for connecting to this server.
+   * @param path the request path, such as "/".
+   */
+  
+
+
+	
 
   /**
    * Returns a cookie domain for this server. This returns the server's
    * non-loopback host name if it is known. Otherwise this returns ".local" for
    * this server's loopback name.
    */
+  
+
   public String getCookieDomain() {
     String hostName = getHostName();
     return hostName.contains(".") ? hostName : ".local";
   }
 
+	
+
   /**
    * Sets the number of bytes of the POST body to keep in memory to the given
    * limit.
    */
+  
+
   public void setBodyLimit(long maxBodyLength) {
     this.bodyLimit = maxBodyLength;
   }
+
+	
 
   /**
    * Sets whether ALPN is used on incoming HTTPS connections to
    * negotiate a protocol like HTTP/1.1 or HTTP/2. Call this method to disable
    * negotiation and restrict connections to HTTP/1.1.
    */
+  
+
   public void setProtocolNegotiationEnabled(boolean protocolNegotiationEnabled) {
     this.protocolNegotiationEnabled = protocolNegotiationEnabled;
   }
+
+	
 
   /**
    * Indicates the protocols supported by ALPN on incoming HTTPS
@@ -230,10 +346,12 @@ public final class MockWebServer implements TestRule {
    * @param protocols the protocols to use, in order of preference. The list
    * must contain {@linkplain Protocol#HTTP_1_1}. It must not contain null.
    */
+  
+
   public void setProtocols(List<Protocol> protocols) {
     protocols = Util.immutableList(protocols);
     if (!protocols.contains(Protocol.HTTP_1_1)) {
-      throw new IllegalArgumentException("protocols doesn't contain http/1.1: " + protocols);
+      throw new IllegalArgumentException("protocols doesn\'t contain http/1.1: " + protocols);
     }
     if (protocols.contains(null)) {
       throw new IllegalArgumentException("protocols must not contain null");
@@ -241,16 +359,22 @@ public final class MockWebServer implements TestRule {
     this.protocols = protocols;
   }
 
+	
+
   /**
    * Serve requests with HTTPS rather than otherwise.
    *
    * @param tunnelProxy true to expect the HTTP CONNECT method before
    * negotiating TLS.
    */
+  
+
   public void useHttps(SSLSocketFactory sslSocketFactory, boolean tunnelProxy) {
     this.sslSocketFactory = sslSocketFactory;
     this.tunnelProxy = tunnelProxy;
   }
+
+	
 
   /**
    * Awaits the next HTTP request, removes it, and returns it. Callers should
@@ -259,9 +383,13 @@ public final class MockWebServer implements TestRule {
    *
    * @return the head of the request queue
    */
+  
+
   public RecordedRequest takeRequest() throws InterruptedException {
     return requestQueue.take();
   }
+
+	
 
   /**
    * Awaits the next HTTP request (waiting up to the
@@ -274,18 +402,26 @@ public final class MockWebServer implements TestRule {
    * {@code timeout} parameter
    * @return the head of the request queue
    */
+  
+
   public RecordedRequest takeRequest(long timeout, TimeUnit unit) throws InterruptedException {
     return requestQueue.poll(timeout, unit);
   }
+
+	
 
   /**
    * Returns the number of HTTP requests received thus far by this server. This
    * may exceed the number of HTTP connections when connection reuse is in
    * practice.
    */
+  
+
   public int getRequestCount() {
     return requestCount.get();
   }
+
+	
 
   /**
    * Scripts {@code response} to be returned to a request made in sequence. The
@@ -295,14 +431,34 @@ public final class MockWebServer implements TestRule {
    * @throws ClassCastException if the default dispatcher has been replaced
    * with {@link #setDispatcher(Dispatcher)}.
    */
+  
+
   public void enqueue(MockResponse response) {
     ((QueueDispatcher) dispatcher).enqueueResponse(response.clone());
   }
 
+	
+
+  /** @deprecated Use {@link #start()}. */
+  
+
+
+	
+
+  /** @deprecated Use {@link #start(int)}. */
+  
+
+
+	
+
   /** Equivalent to {@code start(0)}. */
+  
+
   public void start() throws IOException {
     start(0);
   }
+
+	
 
   /**
    * Starts the server on the loopback interface for the given port.
@@ -311,9 +467,13 @@ public final class MockWebServer implements TestRule {
    * tests should always use port 0 to avoid flakiness when a specific port
    * is unavailable.
    */
+  
+
   public void start(int port) throws IOException {
     start(InetAddress.getByName("localhost"), port);
   }
+
+	
 
   /**
    * Starts the server on the given address and port.
@@ -326,6 +486,7 @@ public final class MockWebServer implements TestRule {
   public void start(InetAddress inetAddress, int port) throws IOException {
     start(new InetSocketAddress(inetAddress, port));
   }
+	
 
   /**
    * Starts the server and binds to the given socket address.
@@ -387,15 +548,18 @@ public final class MockWebServer implements TestRule {
       }
     });
   }
+	
+
+  
 
   public synchronized void shutdown() throws IOException {
-    if (!started) return;
-    if (serverSocket == null) throw new IllegalStateException("shutdown() before start()");
-
-    // Cause acceptConnections() to break out.
+    if (!started) {
+      return;
+    }
+    if (serverSocket == null) {
+      throw new IllegalStateException("shutdown() before start()");
+    }
     serverSocket.close();
-
-    // Await shutdown.
     try {
       if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
         throw new IOException("Gave up waiting for executor to shut down");
@@ -405,6 +569,10 @@ public final class MockWebServer implements TestRule {
     }
   }
 
+	
+
+  
+
   private void serveConnection(final Socket raw) {
     executor.execute(new NamedRunnable("MockWebServer %s", raw.getRemoteSocketAddress()) {
       int sequenceNumber = 0;
@@ -413,11 +581,9 @@ public final class MockWebServer implements TestRule {
         try {
           processConnection();
         } catch (IOException e) {
-          logger.info(
-              MockWebServer.this + " connection from " + raw.getInetAddress() + " failed: " + e);
+          logger.info(MockWebServer.this + " connection from " + raw.getInetAddress() + " failed: " + e);
         } catch (Exception e) {
-          logger.log(Level.SEVERE,
-              MockWebServer.this + " connection from " + raw.getInetAddress() + " crashed", e);
+          logger.log(Level.SEVERE, MockWebServer.this + " connection from " + raw.getInetAddress() + " crashed", e);
         }
       }
 
@@ -434,18 +600,14 @@ public final class MockWebServer implements TestRule {
             processHandshakeFailure(raw);
             return;
           }
-          socket = sslSocketFactory.createSocket(raw, raw.getInetAddress().getHostAddress(),
-              raw.getPort(), true);
+          socket = sslSocketFactory.createSocket(raw, raw.getInetAddress().getHostAddress(), raw.getPort(), true);
           SSLSocket sslSocket = (SSLSocket) socket;
           sslSocket.setUseClientMode(false);
           openClientSockets.add(socket);
-
           if (protocolNegotiationEnabled) {
             Platform.get().configureTlsExtensions(sslSocket, null, protocols);
           }
-
           sslSocket.startHandshake();
-
           if (protocolNegotiationEnabled) {
             String protocolString = Platform.get().getSelectedProtocol(sslSocket);
             protocol = protocolString != null ? Protocol.get(protocolString) : Protocol.HTTP_1_1;
@@ -454,32 +616,20 @@ public final class MockWebServer implements TestRule {
         } else {
           socket = raw;
         }
-
         if (protocol != Protocol.HTTP_1_1) {
           FramedSocketHandler framedSocketListener = new FramedSocketHandler(socket, protocol);
-          FramedConnection framedConnection = new FramedConnection.Builder(false)
-              .socket(socket)
-              .protocol(protocol)
-              .listener(framedSocketListener)
-              .build();
+          FramedConnection framedConnection = new FramedConnection.Builder(false).socket(socket).protocol(protocol).listener(framedSocketListener).build();
           openFramedConnections.add(framedConnection);
           openClientSockets.remove(socket);
           return;
         }
-
         BufferedSource source = Okio.buffer(Okio.source(socket));
         BufferedSink sink = Okio.buffer(Okio.sink(socket));
-
         while (processOneRequest(socket, source, sink)) {
         }
-
         if (sequenceNumber == 0) {
-          logger.warning(MockWebServer.this
-              + " connection from "
-              + raw.getInetAddress()
-              + " didn't make a request");
+          logger.warning(MockWebServer.this + " connection from " + raw.getInetAddress() + " didn\'t make a request");
         }
-
         source.close();
         sink.close();
         socket.close();
@@ -498,7 +648,9 @@ public final class MockWebServer implements TestRule {
           if (!processOneRequest(raw, source, sink)) {
             throw new IllegalStateException("Tunnel without any CONNECT!");
           }
-          if (socketPolicy == SocketPolicy.UPGRADE_TO_SSL_AT_END) return;
+          if (socketPolicy == SocketPolicy.UPGRADE_TO_SSL_AT_END) {
+            return;
+          }
         }
       }
 
@@ -506,28 +658,26 @@ public final class MockWebServer implements TestRule {
        * Reads a request and writes its response. Returns true if further calls should be attempted
        * on the socket.
        */
-      private boolean processOneRequest(Socket socket, BufferedSource source, BufferedSink sink)
-          throws IOException, InterruptedException {
+      private boolean processOneRequest(Socket socket, BufferedSource source, BufferedSink sink) throws IOException, InterruptedException {
         RecordedRequest request = readRequest(socket, source, sink, sequenceNumber);
-        if (request == null) return false;
-
+        if (request == null) {
+          return false;
+        }
         requestCount.incrementAndGet();
         requestQueue.add(request);
-
         MockResponse response = dispatcher.dispatch(request);
         if (response.getSocketPolicy() == SocketPolicy.DISCONNECT_AFTER_REQUEST) {
           socket.close();
           return false;
         }
         if (response.getSocketPolicy() == SocketPolicy.NO_RESPONSE) {
-          // This read should block until the socket is closed. (Because nobody is writing.)
-          if (source.exhausted()) return false;
+          if (source.exhausted()) {
+            return false;
+          }
           throw new ProtocolException("unexpected data");
         }
-
         boolean reuseSocket = true;
-        boolean requestWantsWebSockets = "Upgrade".equalsIgnoreCase(request.getHeader("Connection"))
-            && "websocket".equalsIgnoreCase(request.getHeader("Upgrade"));
+        boolean requestWantsWebSockets = "Upgrade".equalsIgnoreCase(request.getHeader("Connection")) && "websocket".equalsIgnoreCase(request.getHeader("Upgrade"));
         boolean responseWantsWebSockets = response.getWebSocketListener() != null;
         if (requestWantsWebSockets && responseWantsWebSockets) {
           handleWebSocketUpgrade(socket, source, sink, request, response);
@@ -535,60 +685,68 @@ public final class MockWebServer implements TestRule {
         } else {
           writeHttpResponse(socket, sink, response);
         }
-
         if (logger.isLoggable(Level.INFO)) {
-          logger.info(MockWebServer.this + " received request: " + request
-              + " and responded: " + response);
+          logger.info(MockWebServer.this + " received request: " + request + " and responded: " + response);
         }
-
         if (response.getSocketPolicy() == SocketPolicy.DISCONNECT_AT_END) {
           socket.close();
           return false;
-        } else if (response.getSocketPolicy() == SocketPolicy.SHUTDOWN_INPUT_AT_END) {
-          socket.shutdownInput();
-        } else if (response.getSocketPolicy() == SocketPolicy.SHUTDOWN_OUTPUT_AT_END) {
-          socket.shutdownOutput();
+        } else {
+          if (response.getSocketPolicy() == SocketPolicy.SHUTDOWN_INPUT_AT_END) {
+            socket.shutdownInput();
+          } else {
+            if (response.getSocketPolicy() == SocketPolicy.SHUTDOWN_OUTPUT_AT_END) {
+              socket.shutdownOutput();
+            }
+          }
         }
-
         sequenceNumber++;
         return reuseSocket;
       }
     });
   }
 
+	
+
+  
+
   private void processHandshakeFailure(Socket raw) throws Exception {
     SSLContext context = SSLContext.getInstance("TLS");
     context.init(null, new TrustManager[] { UNTRUSTED_TRUST_MANAGER }, new SecureRandom());
     SSLSocketFactory sslSocketFactory = context.getSocketFactory();
-    SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(
-        raw, raw.getInetAddress().getHostAddress(), raw.getPort(), true);
+    SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(raw, raw.getInetAddress().getHostAddress(), raw.getPort(), true);
     try {
-      socket.startHandshake(); // we're testing a handshake failure
+      socket.startHandshake();
       throw new AssertionError();
     } catch (IOException expected) {
     }
     socket.close();
   }
 
-  private void dispatchBookkeepingRequest(int sequenceNumber, Socket socket)
-      throws InterruptedException {
+	
+
+  
+
+  private void dispatchBookkeepingRequest(int sequenceNumber, Socket socket) throws InterruptedException {
     requestCount.incrementAndGet();
     dispatcher.dispatch(new RecordedRequest(null, null, null, -1, null, sequenceNumber, socket));
   }
 
+	
+
   /** @param sequenceNumber the index of this request on this connection. */
-  private RecordedRequest readRequest(Socket socket, BufferedSource source, BufferedSink sink,
-      int sequenceNumber) throws IOException {
+  
+
+  private RecordedRequest readRequest(Socket socket, BufferedSource source, BufferedSink sink, int sequenceNumber) throws IOException {
     String request;
     try {
       request = source.readUtf8LineStrict();
     } catch (IOException streamIsClosed) {
-      return null; // no request because we closed the stream
+      return null;
     }
     if (request.length() == 0) {
-      return null; // no request because the stream is exhausted
+      return null;
     }
-
     Headers.Builder headers = new Headers.Builder();
     long contentLength = -1;
     boolean chunked = false;
@@ -600,23 +758,19 @@ public final class MockWebServer implements TestRule {
       if (contentLength == -1 && lowercaseHeader.startsWith("content-length:")) {
         contentLength = Long.parseLong(header.substring(15).trim());
       }
-      if (lowercaseHeader.startsWith("transfer-encoding:")
-          && lowercaseHeader.substring(18).trim().equals("chunked")) {
+      if (lowercaseHeader.startsWith("transfer-encoding:") && lowercaseHeader.substring(18).trim().equals("chunked")) {
         chunked = true;
       }
-      if (lowercaseHeader.startsWith("expect:")
-          && lowercaseHeader.substring(7).trim().equals("100-continue")) {
+      if (lowercaseHeader.startsWith("expect:") && lowercaseHeader.substring(7).trim().equals("100-continue")) {
         expectContinue = true;
       }
     }
-
     if (expectContinue) {
       sink.writeUtf8("HTTP/1.1 100 Continue\r\n");
       sink.writeUtf8("Content-Length: 0\r\n");
       sink.writeUtf8("\r\n");
       sink.flush();
     }
-
     boolean hasBody = false;
     TruncatingBuffer requestBody = new TruncatingBuffer(bodyLimit);
     List<Integer> chunkSizes = new ArrayList<>();
@@ -624,90 +778,70 @@ public final class MockWebServer implements TestRule {
     if (contentLength != -1) {
       hasBody = contentLength > 0;
       throttledTransfer(policy, socket, source, Okio.buffer(requestBody), contentLength, true);
-    } else if (chunked) {
-      hasBody = true;
-      while (true) {
-        int chunkSize = Integer.parseInt(source.readUtf8LineStrict().trim(), 16);
-        if (chunkSize == 0) {
+    } else {
+      if (chunked) {
+        hasBody = true;
+        while (true) {
+          int chunkSize = Integer.parseInt(source.readUtf8LineStrict().trim(), 16);
+          if (chunkSize == 0) {
+            readEmptyLine(source);
+            break;
+          }
+          chunkSizes.add(chunkSize);
+          throttledTransfer(policy, socket, source, Okio.buffer(requestBody), chunkSize, true);
           readEmptyLine(source);
-          break;
         }
-        chunkSizes.add(chunkSize);
-        throttledTransfer(policy, socket, source, Okio.buffer(requestBody), chunkSize, true);
-        readEmptyLine(source);
       }
     }
-
     String method = request.substring(0, request.indexOf(' '));
     if (hasBody && !HttpMethod.permitsRequestBody(method)) {
       throw new IllegalArgumentException("Request must not have a body: " + request);
     }
-
-    return new RecordedRequest(request, headers.build(), chunkSizes, requestBody.receivedByteCount,
-        requestBody.buffer, sequenceNumber, socket);
+    return new RecordedRequest(request, headers.build(), chunkSizes, requestBody.receivedByteCount, requestBody.buffer, sequenceNumber, socket);
   }
 
-  private void handleWebSocketUpgrade(Socket socket, BufferedSource source, BufferedSink sink,
-      RecordedRequest request, MockResponse response) throws IOException {
+	
+
+  
+
+  private void handleWebSocketUpgrade(Socket socket, BufferedSource source, BufferedSink sink, RecordedRequest request, MockResponse response) throws IOException {
     String key = request.getHeader("Sec-WebSocket-Key");
     String acceptKey = Util.shaBase64(key + WebSocketProtocol.ACCEPT_MAGIC);
     response.setHeader("Sec-WebSocket-Accept", acceptKey);
-
     writeHttpResponse(socket, sink, response);
-
     final WebSocketListener listener = response.getWebSocketListener();
     final CountDownLatch connectionClose = new CountDownLatch(1);
-
-    ThreadPoolExecutor replyExecutor =
-        new ThreadPoolExecutor(1, 1, 1, SECONDS, new LinkedBlockingDeque<Runnable>(),
-            Util.threadFactory(String.format("MockWebServer %s WebSocket", request.getPath()),
-                true));
+    ThreadPoolExecutor replyExecutor = new ThreadPoolExecutor(1, 1, 1, SECONDS, new LinkedBlockingDeque<Runnable>(), Util.threadFactory(String.format("MockWebServer %s WebSocket", request.getPath()), true));
     replyExecutor.allowCoreThreadTimeOut(true);
-    final RealWebSocket webSocket =
-        new RealWebSocket(false /* is server */, source, sink, new SecureRandom(), replyExecutor,
-            listener, request.getPath()) {
-          @Override protected void close() throws IOException {
-            connectionClose.countDown();
-          }
-        };
-
-    // Adapt the request and response into our Request and Response domain model.
+    final RealWebSocket webSocket = new RealWebSocket(false, source, sink, new SecureRandom(), replyExecutor, listener, request.getPath()) {
+      @Override protected void close() throws IOException {
+        connectionClose.countDown();
+      }
+    };
     String scheme = request.getTlsVersion() != null ? "https" : "http";
-    String authority = request.getHeader("Host"); // Has host and port.
-    final Request fancyRequest = new Request.Builder()
-        .url(scheme + "://" + authority + "/")
-        .headers(request.getHeaders())
-        .build();
-    final Response fancyResponse = new Response.Builder()
-        .code(Integer.parseInt(response.getStatus().split(" ")[1]))
-        .message(response.getStatus().split(" ", 3)[2])
-        .headers(response.getHeaders())
-        .request(fancyRequest)
-        .protocol(Protocol.HTTP_1_1)
-        .build();
-
+    String authority = request.getHeader("Host");
+    final Request fancyRequest = new Request.Builder().url(scheme + "://" + authority + "/").headers(request.getHeaders()).build();
+    final Response fancyResponse = new Response.Builder().code(Integer.parseInt(response.getStatus().split(" ")[1])).message(response.getStatus().split(" ", 3)[2]).headers(response.getHeaders()).request(fancyRequest).protocol(Protocol.HTTP_1_1).build();
     listener.onOpen(webSocket, fancyResponse);
-
     while (webSocket.readMessage()) {
     }
-
-    // Even if messages are no longer being read we need to wait for the connection close signal.
     try {
       connectionClose.await();
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-
     replyExecutor.shutdown();
     Util.closeQuietly(sink);
     Util.closeQuietly(source);
   }
 
-  private void writeHttpResponse(Socket socket, BufferedSink sink, MockResponse response)
-      throws IOException {
+	
+
+  
+
+  private void writeHttpResponse(Socket socket, BufferedSink sink, MockResponse response) throws IOException {
     sink.writeUtf8(response.getStatus());
     sink.writeUtf8("\r\n");
-
     Headers headers = response.getHeaders();
     for (int i = 0, size = headers.size(); i < size; i++) {
       sink.writeUtf8(headers.name(i));
@@ -717,12 +851,17 @@ public final class MockWebServer implements TestRule {
     }
     sink.writeUtf8("\r\n");
     sink.flush();
-
     Buffer body = response.getBody();
-    if (body == null) return;
+    if (body == null) {
+      return;
+    }
     sleepIfDelayed(response);
     throttledTransfer(response, socket, body, sink, body.size(), false);
   }
+
+	
+
+  
 
   private void sleepIfDelayed(MockResponse response) {
     long delayMs = response.getBodyDelay(TimeUnit.MILLISECONDS);
@@ -734,6 +873,8 @@ public final class MockWebServer implements TestRule {
       }
     }
   }
+
+	
 
   /**
    * Transfer bytes from {@code source} to {@code sink} until either {@code byteCount}
@@ -787,11 +928,28 @@ public final class MockWebServer implements TestRule {
       }
     }
   }
+	
+
+  /**
+   * Transfer bytes from {@code source} to {@code sink} until either {@code byteCount}
+   * bytes have been transferred or {@code source} is exhausted. The transfer is
+   * throttled according to {@code throttlePolicy}.
+   */
+  
+
+
+	
+
+  
 
   private void readEmptyLine(BufferedSource source) throws IOException {
     String line = source.readUtf8LineStrict();
-    if (line.length() != 0) throw new IllegalStateException("Expected empty but was: " + line);
+    if (line.length() != 0) {
+      throw new IllegalStateException("Expected empty but was: " + line);
+    }
   }
+
+	
 
   /**
    * Sets the dispatcher used to match incoming requests to mock responses.
@@ -799,59 +957,108 @@ public final class MockWebServer implements TestRule {
    * a {@link #enqueue(MockResponse) queue}; custom dispatchers can vary the
    * response based on timing or the content of the request.
    */
+  
+
   public void setDispatcher(Dispatcher dispatcher) {
-    if (dispatcher == null) throw new NullPointerException();
+    if (dispatcher == null) {
+      throw new NullPointerException();
+    }
     this.dispatcher = dispatcher;
   }
+
+	
+
+  
 
   @Override public String toString() {
     return "MockWebServer[" + port + "]";
   }
 
+	
+
   /** A buffer wrapper that drops data after {@code bodyLimit} bytes. */
-  private static class TruncatingBuffer implements Sink {
-    private final Buffer buffer = new Buffer();
-    private long remainingByteCount;
-    private long receivedByteCount;
+  private static  class  TruncatingBuffer  implements Sink {
+		
+    
 
-    TruncatingBuffer(long bodyLimit) {
-      remainingByteCount = bodyLimit;
-    }
+  private final Buffer buffer = new Buffer();
 
-    @Override public void write(Buffer source, long byteCount) throws IOException {
-      long toRead = Math.min(remainingByteCount, byteCount);
-      if (toRead > 0) {
-        source.read(buffer, toRead);
-      }
-      long toSkip = byteCount - toRead;
-      if (toSkip > 0) {
-        source.skip(toSkip);
-      }
-      remainingByteCount -= toRead;
-      receivedByteCount += byteCount;
-    }
+		
+    
 
-    @Override public void flush() throws IOException {
-    }
+  private long remainingByteCount;
 
-    @Override public Timeout timeout() {
-      return Timeout.NONE;
-    }
+		
+    
 
-    @Override public void close() throws IOException {
-    }
+  private long receivedByteCount;
+
+		
+
+    
+
+  TruncatingBuffer(long bodyLimit) {
+    remainingByteCount = bodyLimit;
   }
 
+		
+
+    
+
+  @Override public void write(Buffer source, long byteCount) throws IOException {
+    long toRead = Math.min(remainingByteCount, byteCount);
+    if (toRead > 0) {
+      source.read(buffer, toRead);
+    }
+    long toSkip = byteCount - toRead;
+    if (toSkip > 0) {
+      source.skip(toSkip);
+    }
+    remainingByteCount -= toRead;
+    receivedByteCount += byteCount;
+  }
+
+		
+
+    
+
+  @Override public void flush() throws IOException {
+  }
+
+		
+
+    
+
+  @Override public Timeout timeout() {
+    return Timeout.NONE;
+  }
+
+		
+
+    
+
+  @Override public void close() throws IOException {
+  }
+
+
+	}
+	
+
   /** Processes HTTP requests layered over framed protocols. */
-  private class FramedSocketHandler extends FramedConnection.Listener {
+  private  class  FramedSocketHandler  extends FramedConnection.Listener {
+		
     private final Socket socket;
+		
     private final Protocol protocol;
+		
     private final AtomicInteger sequenceNumber = new AtomicInteger();
+		
 
     private FramedSocketHandler(Socket socket, Protocol protocol) {
       this.socket = socket;
       this.protocol = protocol;
     }
+		
 
     @Override public void onStream(FramedStream stream) throws IOException {
       RecordedRequest request = readRequest(stream);
@@ -868,6 +1075,7 @@ public final class MockWebServer implements TestRule {
             + " and responded: " + response + " protocol is " + protocol.toString());
       }
     }
+		
 
     private RecordedRequest readRequest(FramedStream stream) throws IOException {
       List<Header> streamHeaders = stream.getRequestHeaders();
@@ -904,6 +1112,7 @@ public final class MockWebServer implements TestRule {
       return new RecordedRequest(requestLine, httpHeaders.build(), chunkSizes, body.size(), body,
           sequenceNumber.getAndIncrement(), socket);
     }
+		
 
     private void writeResponse(FramedStream stream, MockResponse response) throws IOException {
       Settings settings = response.getSettings();
@@ -942,6 +1151,7 @@ public final class MockWebServer implements TestRule {
         stream.close(ErrorCode.NO_ERROR);
       }
     }
+		
 
     private void pushPromises(FramedStream stream, List<PushPromise> promises) throws IOException {
       for (PushPromise pushPromise : promises) {
@@ -965,5 +1175,50 @@ public final class MockWebServer implements TestRule {
         writeResponse(pushedStream, pushPromise.getResponse());
       }
     }
-  }
+
+	}
+	
+
+  /** Processes HTTP requests layered over SPDY/3. */
+      SpdySocketHandler   {
+		
+    
+
+
+		
+    
+
+
+		
+    
+
+
+		
+
+    
+
+
+		
+
+    
+
+
+		
+
+    
+
+
+		
+
+    
+
+
+		
+
+    
+
+
+
+	}
+
 }
